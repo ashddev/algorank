@@ -1,76 +1,91 @@
 // src/components/Home.tsx
-import { useWallet } from '@txnlab/use-wallet-react'
-import React, { useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import ConnectWallet from './components/ConnectWallet'
-import Transact from './components/Transact'
-import AppCalls from './components/AppCalls'
+import Register from './components/Register'
+import CreateBallot from './components/CreateBallot'
+import Tally from './components/Tally'
+import { uploadBallotPinata } from './utils/pinata'
+import { useWallet } from "@txnlab/use-wallet-react"
+import { AlgorandClient } from "@algorandfoundation/algokit-utils"
+import { getAlgodConfigFromViteEnvironment, getIndexerConfigFromViteEnvironment } from './utils/network/getAlgoClientConfigs'
+import { APP_SPEC } from "./contracts/Election"
+import { useSnackbar } from 'notistack'
+import { Button } from './components/ui/button'
 
-interface HomeProps { }
+const ELECTION_APP_ID = BigInt(1002)
 
-const Home: React.FC<HomeProps> = () => {
-  const [openWalletModal, setOpenWalletModal] = useState<boolean>(false)
-  const [openDemoModal, setOpenDemoModal] = useState<boolean>(false)
-  const [appCallsDemoModal, setAppCallsDemoModal] = useState<boolean>(false)
-  const { activeAddress } = useWallet()
+const Home: React.FC = () => {
+  type Phase = "register" | "voting" | "tally"
+  const [phase, setPhase] = useState<Phase>("register")
+  const { transactionSigner, activeAddress } = useWallet()
+  const { enqueueSnackbar } = useSnackbar()
 
-  const toggleWalletModal = () => {
-    setOpenWalletModal(!openWalletModal)
-  }
+  let utf8Encode = new TextEncoder();
 
-  const toggleDemoModal = () => {
-    setOpenDemoModal(!openDemoModal)
-  }
+  const algodConfig = getAlgodConfigFromViteEnvironment()
+  const indexerConfig = getIndexerConfigFromViteEnvironment()
 
-  const toggleAppCallsModal = () => {
-    setAppCallsDemoModal(!appCallsDemoModal)
-  }
+  const algorand = useMemo(() => {
+    const c = AlgorandClient.fromConfig({ algodConfig, indexerConfig })
+    if (transactionSigner) c.setDefaultSigner(transactionSigner)
+    return c
+  }, [algodConfig, indexerConfig, transactionSigner])
+
+  const electionClient = useMemo(() => {
+    if (!activeAddress) return undefined
+    return algorand.client.getAppClientById({
+      appSpec: APP_SPEC,
+      appId: ELECTION_APP_ID,
+      defaultSender: activeAddress,
+    })
+  }, [algorand, activeAddress])
 
   return (
-    <div className="hero min-h-screen bg-teal-400">
-      <div className="hero-content text-center rounded-lg p-6 max-w-md bg-white mx-auto">
-        <div className="max-w-md">
-          <h1 className="text-4xl">
-            Welcome to <div className="font-bold">AlgoKit 🙂</div>
-          </h1>
-          <p className="py-6">
-            This starter has been generated using official AlgoKit React template. Refer to the resource below for next steps.
-          </p>
+    <div className="min-h-screen bg-teal-400 flex items-center">
+      <div className="text-center rounded-lg p-6 bg-white mx-auto">
 
-          <ConnectWallet openModal={openWalletModal} closeModal={toggleWalletModal} />
+        {phase === "register" && (
+          <div>
+            <h1 className="text-4xl">
+              Welcome to <div className="font-mono">algorank</div>
+            </h1>
+            <p className="py-6">
+              This is the open source, confidential, ranked choice voting protocol on Algorand.
+            </p>
 
-
-          {/* <div className="grid">
-            <a
-              data-test-id="getting-started"
-              className="btn btn-primary m-2"
-              target="_blank"
-              href="https://github.com/algorandfoundation/algokit-cli"
-            >
-              Getting started
-            </a>
-
-            <div className="divider" />
-            <button data-test-id="connect-wallet" className="btn m-2" onClick={toggleWalletModal}>
-              Wallet Connection
-            </button>
-
-            {activeAddress && (
-              <button data-test-id="transactions-demo" className="btn m-2" onClick={toggleDemoModal}>
-                Transactions Demo
-              </button>
-            )}
-
-            {activeAddress && (
-              <button data-test-id="appcalls-demo" className="btn m-2" onClick={toggleAppCallsModal}>
-                Contract Interactions Demo
-              </button>
-            )}
+            <div className='flex flex-col gap-2'>
+              <ConnectWallet />
+              {electionClient && <Register electionClient={electionClient} />}
+              <Button onClick={() => setPhase("voting")} disabled={!electionClient}>
+                Vote
+              </Button>
+            </div>
           </div>
+        )}
 
-          <ConnectWallet openModal={openWalletModal} closeModal={toggleWalletModal} />
-          <Transact openModal={openDemoModal} setModalState={setOpenDemoModal} />
-          <AppCalls openModal={appCallsDemoModal} setModalState={setAppCallsDemoModal} /> */}
-        </div>
+        {phase === "voting" && electionClient && (
+          <CreateBallot
+            onSubmit={async (ranking) => {
+              try {
+                const cid = await uploadBallotPinata({ranking})
+                const res = await electionClient.send
+                  .call({
+                    method: 'cast_ballot',
+                    args: [utf8Encode.encode(cid)]
+                  })
+                enqueueSnackbar(`Ballot submitted! Tx: ${res.transaction.txID()}`, { variant: 'success' })
+              } catch (e: any) {
+                enqueueSnackbar(`Error calling the contract: ${e.message}`, { variant: 'error' })
+              }
+            }}
+          />
+        )}
+
+        {phase === "voting" && !electionClient && (
+          <div className="text-sm text-red-600">Connect wallet to vote.</div>
+        )}
+
+        {phase === "tally" && (<Tally />)}
       </div>
     </div>
   )

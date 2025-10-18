@@ -8,15 +8,22 @@ const Account = () => {
   const algoConfig = getAlgodConfigFromViteEnvironment()
 
   const networkName = useMemo(() => {
-    return algoConfig.network === '' ? 'localnet' : algoConfig.network.toLocaleLowerCase()
+    const n = (algoConfig.network || '').trim()
+    return (n === '' ? 'localnet' : n).toLowerCase()
   }, [algoConfig.network])
 
   return (
-    <div>
-      <a className="text-xl" target="_blank" href={`https://lora.algokit.io/${networkName}/account/${activeAddress}/`}>
-        Address: {ellipseAddress(activeAddress)}
-      </a>
-      <div className="text-xl">Network: {networkName}</div>
+    <div className="space-y-1 text-sm">
+      <div >
+        <span className="font-medium">Address:</span>{' '}
+        <span className="font-mono">
+          {activeAddress ? ellipseAddress(activeAddress) : '—'}
+        </span>
+      </div>
+      <div>
+        <span className="font-medium">Network:</span>{' '}
+        <span className="uppercase">{networkName}</span>
+      </div>
     </div>
   )
 }
