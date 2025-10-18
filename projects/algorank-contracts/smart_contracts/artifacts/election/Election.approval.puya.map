@@ -1,0 +1,1194 @@
+{
+  "version": 3,
+  "sources": [
+    "../../election/contract.py"
+  ],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAOQ;AAAkC;AAAlC;AAHR;;AAAA;;;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;;;;;;;;;;AAAA;;;AAAA;;;;;;AAAA;AAAA;;AAAA;;;;;;AAAA;AAUK;;AAAA;;;;;AAIA;;;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAEa;;AAAA;AACO;AAAA;AAAA;AAAA;;AACzB;;;AACmB;;;;;;;;;;;;;;;;;;;;;;AALd;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAOG;;AAAA;;;;;;;;;;;;;AAAA;;AAAA;AACA;AAAyB;AAAzB;AACO;;;;;;;;;;;;;;AATV;;;AAYA;;;AAAA;;AAAA;AAAA;;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;AAEoB;AAAA;AAAA;AACb;;;AACO;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAJd;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAKO;AAAU;AAAV;AAAZ;;;AACmB;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AANd;;;AAQG;AAAA;;AAAA;AACA;;AAAA;AAA6B;AAA7B;AACO;;;;;;;;;;;;;;;;;;AAVV",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "algopy.arc4.ARC4Contract.approval_program",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 0 1"
+    },
+    "5": {
+      "op": "bytecblock \"verified\" \"commitment_sum\" 0x151f7c75"
+    },
+    "36": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "38": {
+      "op": "bnz main_after_if_else@2",
+      "stack_out": []
+    },
+    "41": {
+      "op": "bytec_1 // \"commitment_sum\"",
+      "defined_out": [
+        "\"commitment_sum\""
+      ],
+      "stack_out": [
+        "\"commitment_sum\""
+      ]
+    },
+    "42": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "\"commitment_sum\"",
+        "0"
+      ],
+      "stack_out": [
+        "\"commitment_sum\"",
+        "0"
+      ]
+    },
+    "43": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "44": {
+      "block": "main_after_if_else@2",
+      "stack_in": [],
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "46": {
+      "op": "bz main_bare_routing@11",
+      "stack_out": []
+    },
+    "49": {
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "51": {
+      "op": "!",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "52": {
+      "error": "OnCompletion must be NoOp",
+      "op": "assert // OnCompletion must be NoOp",
+      "stack_out": []
+    },
+    "53": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "55": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "56": {
+      "op": "pushbytess 0x9faa80cc 0xe42341d3 // method \"cast_ballot(byte[])string\", method \"verify_ballot(address,uint64)string\"",
+      "defined_out": [
+        "Method(cast_ballot(byte[])string)",
+        "Method(verify_ballot(address,uint64)string)"
+      ],
+      "stack_out": [
+        "Method(cast_ballot(byte[])string)",
+        "Method(verify_ballot(address,uint64)string)"
+      ]
+    },
+    "68": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(cast_ballot(byte[])string)",
+        "Method(verify_ballot(address,uint64)string)",
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "Method(cast_ballot(byte[])string)",
+        "Method(verify_ballot(address,uint64)string)",
+        "tmp%6#0"
+      ]
+    },
+    "71": {
+      "op": "match cast_ballot verify_ballot",
+      "stack_out": []
+    },
+    "77": {
+      "op": "err"
+    },
+    "78": {
+      "block": "main_bare_routing@11",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "80": {
+      "op": "switch main___algopy_default_create@12 main_register@13",
+      "stack_out": []
+    },
+    "86": {
+      "op": "err"
+    },
+    "87": {
+      "block": "main_register@13",
+      "stack_in": [],
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0"
+      ]
+    },
+    "89": {
+      "error": "can only call when not creating",
+      "op": "return // on error: can only call when not creating",
+      "defined_out": [],
+      "stack_out": []
+    },
+    "90": {
+      "block": "main___algopy_default_create@12",
+      "stack_in": [],
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "92": {
+      "op": "!",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "93": {
+      "error": "can only call when creating",
+      "op": "return // on error: can only call when creating",
+      "defined_out": [],
+      "stack_out": []
+    },
+    "94": {
+      "subroutine": "smart_contracts.election.contract.Election.cast_ballot[routing]",
+      "params": {},
+      "block": "cast_ballot",
+      "stack_in": [],
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "97": {
+      "op": "dup",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "98": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)",
+        "0"
+      ]
+    },
+    "99": {
+      "op": "extract_uint16",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "100": {
+      "op": "pushint 2 // 2",
+      "defined_out": [
+        "2",
+        "aggregate%array_length%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "aggregate%array_length%0#0",
+        "2"
+      ]
+    },
+    "102": {
+      "op": "+",
+      "defined_out": [
+        "add%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0"
+      ]
+    },
+    "103": {
+      "op": "dig 1",
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "105": {
+      "op": "len",
+      "defined_out": [
+        "add%0#0",
+        "len%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0",
+        "len%0#0"
+      ]
+    },
+    "106": {
+      "op": "==",
+      "defined_out": [
+        "eq%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "eq%0#0"
+      ]
+    },
+    "107": {
+      "error": "invalid number of bytes for (len+uint8[])",
+      "op": "assert // invalid number of bytes for (len+uint8[])",
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "108": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "ipfs_hash#0"
+      ],
+      "stack_out": [
+        "ipfs_hash#0"
+      ]
+    },
+    "111": {
+      "op": "txn Sender"
+    },
+    "113": {
+      "op": "dup"
+    },
+    "114": {
+      "op": "intc_0 // 0"
+    },
+    "115": {
+      "op": "bytec_0 // \"verified\"",
+      "defined_out": [
+        "\"verified\"",
+        "0",
+        "account#0",
+        "ipfs_hash#0"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "account#0",
+        "0",
+        "\"verified\""
+      ]
+    },
+    "116": {
+      "op": "app_local_get_ex",
+      "defined_out": [
+        "account#0",
+        "exists#0",
+        "ipfs_hash#0",
+        "result#0"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "result#0",
+        "exists#0"
+      ]
+    },
+    "117": {
+      "op": "bury 1",
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "exists#0"
+      ]
+    },
+    "119": {
+      "op": "bz cast_ballot_after_if_else@3",
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0"
+      ]
+    },
+    "122": {
+      "op": "pushbytes \"Ballot already sent!\"",
+      "defined_out": [
+        "account#0",
+        "ipfs_hash#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "tmp%2#0"
+      ]
+    },
+    "144": {
+      "block": "cast_ballot_after_inlined_smart_contracts.election.contract.Election.cast_ballot@4",
+      "stack_in": [
+        "ipfs_hash#0",
+        "account#0",
+        "tmp%2#0"
+      ],
+      "op": "dup",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ]
+    },
+    "145": {
+      "op": "len",
+      "defined_out": [
+        "aggregate%length%0#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "tmp%2#0",
+        "aggregate%length%0#0"
+      ]
+    },
+    "146": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%as_bytes%0#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "tmp%2#0",
+        "aggregate%as_bytes%0#0"
+      ]
+    },
+    "147": {
+      "op": "extract 6 2",
+      "defined_out": [
+        "aggregate%length_uint16%0#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "tmp%2#0",
+        "aggregate%length_uint16%0#0"
+      ]
+    },
+    "150": {
+      "op": "swap",
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "aggregate%length_uint16%0#0",
+        "tmp%2#0"
+      ]
+    },
+    "151": {
+      "op": "concat",
+      "defined_out": [
+        "aggregate%encoded_value%0#0"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "aggregate%encoded_value%0#0"
+      ]
+    },
+    "152": {
+      "op": "bytec_2 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "aggregate%encoded_value%0#0"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "aggregate%encoded_value%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "153": {
+      "op": "swap",
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "0x151f7c75",
+        "aggregate%encoded_value%0#0"
+      ]
+    },
+    "154": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "tmp%4#0"
+      ]
+    },
+    "155": {
+      "op": "log",
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0"
+      ]
+    },
+    "156": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "1"
+      ]
+    },
+    "157": {
+      "op": "return",
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0"
+      ]
+    },
+    "158": {
+      "block": "cast_ballot_after_if_else@3",
+      "stack_in": [
+        "ipfs_hash#0",
+        "account#0"
+      ],
+      "op": "dupn 2",
+      "defined_out": [
+        "account#0",
+        "account#0 (copy)"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "account#0",
+        "account#0 (copy)"
+      ]
+    },
+    "160": {
+      "op": "pushbytes \"ballot_ipfs\"",
+      "defined_out": [
+        "\"ballot_ipfs\"",
+        "account#0",
+        "account#0 (copy)"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "account#0",
+        "account#0 (copy)",
+        "\"ballot_ipfs\""
+      ]
+    },
+    "173": {
+      "op": "dig 4",
+      "defined_out": [
+        "\"ballot_ipfs\"",
+        "account#0",
+        "account#0 (copy)",
+        "ipfs_hash#0"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "account#0",
+        "account#0 (copy)",
+        "\"ballot_ipfs\"",
+        "ipfs_hash#0"
+      ]
+    },
+    "175": {
+      "op": "app_local_put",
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "account#0"
+      ]
+    },
+    "176": {
+      "op": "bytec_0 // \"verified\"",
+      "defined_out": [
+        "\"verified\"",
+        "account#0",
+        "ipfs_hash#0"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "account#0",
+        "\"verified\""
+      ]
+    },
+    "177": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "\"verified\"",
+        "0",
+        "account#0",
+        "ipfs_hash#0"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "account#0",
+        "\"verified\"",
+        "0"
+      ]
+    },
+    "178": {
+      "op": "app_local_put",
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0"
+      ]
+    },
+    "179": {
+      "op": "pushbytes \"Ballot cast!\"",
+      "defined_out": [
+        "account#0",
+        "ipfs_hash#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "ipfs_hash#0",
+        "account#0",
+        "tmp%2#0"
+      ]
+    },
+    "193": {
+      "op": "b cast_ballot_after_inlined_smart_contracts.election.contract.Election.cast_ballot@4"
+    },
+    "196": {
+      "subroutine": "smart_contracts.election.contract.Election.verify_ballot[routing]",
+      "params": {},
+      "block": "verify_ballot",
+      "stack_in": [],
+      "op": "txna ApplicationArgs 1"
+    },
+    "199": {
+      "op": "dupn 2",
+      "defined_out": [
+        "for_account#0",
+        "for_account#0 (copy)"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "for_account#0",
+        "for_account#0 (copy)"
+      ]
+    },
+    "201": {
+      "op": "len",
+      "defined_out": [
+        "for_account#0",
+        "len%0#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "for_account#0",
+        "len%0#0"
+      ]
+    },
+    "202": {
+      "op": "pushint 32 // 32",
+      "defined_out": [
+        "32",
+        "for_account#0",
+        "len%0#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "for_account#0",
+        "len%0#0",
+        "32"
+      ]
+    },
+    "204": {
+      "op": "==",
+      "defined_out": [
+        "eq%0#0",
+        "for_account#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "for_account#0",
+        "eq%0#0"
+      ]
+    },
+    "205": {
+      "error": "invalid number of bytes for uint8[32]",
+      "op": "assert // invalid number of bytes for uint8[32]",
+      "stack_out": [
+        "for_account#0",
+        "for_account#0"
+      ]
+    },
+    "206": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "for_account#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "for_account#0",
+        "tmp%2#0"
+      ]
+    },
+    "209": {
+      "op": "dup",
+      "defined_out": [
+        "for_account#0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "for_account#0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ]
+    },
+    "210": {
+      "op": "len",
+      "defined_out": [
+        "for_account#0",
+        "len%1#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "for_account#0",
+        "tmp%2#0",
+        "len%1#0"
+      ]
+    },
+    "211": {
+      "op": "pushint 8 // 8",
+      "defined_out": [
+        "8",
+        "for_account#0",
+        "len%1#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "for_account#0",
+        "tmp%2#0",
+        "len%1#0",
+        "8"
+      ]
+    },
+    "213": {
+      "op": "==",
+      "defined_out": [
+        "eq%1#0",
+        "for_account#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "for_account#0",
+        "tmp%2#0",
+        "eq%1#0"
+      ]
+    },
+    "214": {
+      "error": "invalid number of bytes for uint64",
+      "op": "assert // invalid number of bytes for uint64",
+      "stack_out": [
+        "for_account#0",
+        "for_account#0",
+        "tmp%2#0"
+      ]
+    },
+    "215": {
+      "op": "btoi",
+      "defined_out": [
+        "for_account#0",
+        "new_commitment_sum#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "for_account#0",
+        "new_commitment_sum#0"
+      ]
+    },
+    "216": {
+      "op": "swap",
+      "defined_out": [
+        "for_account#0",
+        "new_commitment_sum#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "for_account#0"
+      ]
+    },
+    "217": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "for_account#0",
+        "0"
+      ]
+    },
+    "218": {
+      "op": "bytec_0 // \"verified\"",
+      "defined_out": [
+        "\"verified\"",
+        "0",
+        "for_account#0",
+        "new_commitment_sum#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "for_account#0",
+        "0",
+        "\"verified\""
+      ]
+    },
+    "219": {
+      "op": "app_local_get_ex",
+      "defined_out": [
+        "exists#0",
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "exists#0"
+      ]
+    },
+    "220": {
+      "op": "bnz verify_ballot_after_if_else@3",
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0"
+      ]
+    },
+    "223": {
+      "op": "pushbytes \"Account has not cast a ballot!\"",
+      "defined_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "tmp%4#0"
+      ]
+    },
+    "255": {
+      "block": "verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ballot@6",
+      "stack_in": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "tmp%4#0"
+      ],
+      "op": "dup",
+      "defined_out": [
+        "tmp%4#0",
+        "tmp%4#0 (copy)"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "tmp%4#0",
+        "tmp%4#0 (copy)"
+      ]
+    },
+    "256": {
+      "op": "len",
+      "defined_out": [
+        "aggregate%length%0#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "tmp%4#0",
+        "aggregate%length%0#0"
+      ]
+    },
+    "257": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%as_bytes%0#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "tmp%4#0",
+        "aggregate%as_bytes%0#0"
+      ]
+    },
+    "258": {
+      "op": "extract 6 2",
+      "defined_out": [
+        "aggregate%length_uint16%0#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "tmp%4#0",
+        "aggregate%length_uint16%0#0"
+      ]
+    },
+    "261": {
+      "op": "swap",
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "aggregate%length_uint16%0#0",
+        "tmp%4#0"
+      ]
+    },
+    "262": {
+      "op": "concat",
+      "defined_out": [
+        "aggregate%encoded_value%0#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "aggregate%encoded_value%0#0"
+      ]
+    },
+    "263": {
+      "op": "bytec_2 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "aggregate%encoded_value%0#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "aggregate%encoded_value%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "264": {
+      "op": "swap",
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "0x151f7c75",
+        "aggregate%encoded_value%0#0"
+      ]
+    },
+    "265": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "tmp%6#0"
+      ]
+    },
+    "266": {
+      "op": "log",
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0"
+      ]
+    },
+    "267": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "1"
+      ]
+    },
+    "268": {
+      "op": "return",
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0"
+      ]
+    },
+    "269": {
+      "block": "verify_ballot_after_if_else@3",
+      "stack_in": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0"
+      ],
+      "op": "dup",
+      "defined_out": [
+        "result#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "result#0"
+      ]
+    },
+    "270": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "result#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "result#0",
+        "1"
+      ]
+    },
+    "271": {
+      "op": "==",
+      "defined_out": [
+        "result#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "tmp%0#1"
+      ]
+    },
+    "272": {
+      "op": "bz verify_ballot_after_if_else@5",
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0"
+      ]
+    },
+    "275": {
+      "op": "pushbytes \"This ballot is already verified!\"",
+      "defined_out": [
+        "result#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "tmp%4#0"
+      ]
+    },
+    "309": {
+      "op": "b verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ballot@6"
+    },
+    "312": {
+      "block": "verify_ballot_after_if_else@5",
+      "stack_in": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0"
+      ],
+      "op": "bytec_1 // \"commitment_sum\"",
+      "defined_out": [
+        "\"commitment_sum\""
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "\"commitment_sum\""
+      ]
+    },
+    "313": {
+      "op": "dig 2",
+      "defined_out": [
+        "\"commitment_sum\"",
+        "new_commitment_sum#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "\"commitment_sum\"",
+        "new_commitment_sum#0"
+      ]
+    },
+    "315": {
+      "op": "app_global_put",
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0"
+      ]
+    },
+    "316": {
+      "op": "dig 2",
+      "defined_out": [
+        "for_account#0",
+        "new_commitment_sum#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "for_account#0"
+      ]
+    },
+    "318": {
+      "op": "bytec_0 // \"verified\"",
+      "defined_out": [
+        "\"verified\"",
+        "for_account#0",
+        "new_commitment_sum#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "for_account#0",
+        "\"verified\""
+      ]
+    },
+    "319": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "\"verified\"",
+        "1",
+        "for_account#0",
+        "new_commitment_sum#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "for_account#0",
+        "\"verified\"",
+        "1"
+      ]
+    },
+    "320": {
+      "op": "app_local_put",
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0"
+      ]
+    },
+    "321": {
+      "op": "pushbytes \"Verified ballot!\"",
+      "defined_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "for_account#0",
+        "new_commitment_sum#0",
+        "result#0",
+        "tmp%4#0"
+      ]
+    },
+    "339": {
+      "op": "b verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ballot@6"
+    }
+  }
+}

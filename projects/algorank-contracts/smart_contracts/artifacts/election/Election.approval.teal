@@ -1,0 +1,196 @@
+#pragma version 11
+#pragma typetrack false
+
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 0 1
+    bytecblock "verified" "commitment_sum" 0x151f7c75
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // smart_contracts/election/contract.py:7-8
+    // # ---- Global storage
+    // self.commitment_sum = GlobalState(UInt64(0))
+    bytec_1 // "commitment_sum"
+    intc_0 // 0
+    app_global_put
+
+main_after_if_else@2:
+    // smart_contracts/election/contract.py:5
+    // class Election(ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@11
+    txn OnCompletion
+    !
+    assert // OnCompletion must be NoOp
+    txn ApplicationID
+    assert
+    pushbytess 0x9faa80cc 0xe42341d3 // method "cast_ballot(byte[])string", method "verify_ballot(address,uint64)string"
+    txna ApplicationArgs 0
+    match cast_ballot verify_ballot
+    err
+
+main_bare_routing@11:
+    // smart_contracts/election/contract.py:5
+    // class Election(ARC4Contract):
+    txn OnCompletion
+    switch main___algopy_default_create@12 main_register@13
+    err
+
+main_register@13:
+    // smart_contracts/election/contract.py:15
+    // @baremethod(allow_actions=["OptIn"])
+    txn ApplicationID
+    return // on error: can only call when not creating
+
+main___algopy_default_create@12:
+    txn ApplicationID
+    !
+    return // on error: can only call when creating
+
+
+// smart_contracts.election.contract.Election.cast_ballot[routing]() -> void:
+cast_ballot:
+    // smart_contracts/election/contract.py:19
+    // @abimethod()
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16
+    pushint 2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for (len+uint8[])
+    extract 2 0
+    // smart_contracts/election/contract.py:21
+    // account = Txn.sender
+    txn Sender
+    dup
+    // smart_contracts/election/contract.py:22
+    // result, exists = self.verified.maybe(account)
+    intc_0 // 0
+    bytec_0 // "verified"
+    app_local_get_ex
+    bury 1
+    // smart_contracts/election/contract.py:23
+    // if (exists):
+    bz cast_ballot_after_if_else@3
+    // smart_contracts/election/contract.py:24
+    // return String("Ballot already sent!")
+    pushbytes "Ballot already sent!"
+
+cast_ballot_after_inlined_smart_contracts.election.contract.Election.cast_ballot@4:
+    // smart_contracts/election/contract.py:19
+    // @abimethod()
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec_2 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+cast_ballot_after_if_else@3:
+    // smart_contracts/election/contract.py:26
+    // self.ballot_ipfs[account] = ipfs_hash
+    dupn 2
+    pushbytes "ballot_ipfs"
+    dig 4
+    app_local_put
+    // smart_contracts/election/contract.py:27
+    // self.verified[account] = UInt64(0)
+    bytec_0 // "verified"
+    intc_0 // 0
+    app_local_put
+    // smart_contracts/election/contract.py:28
+    // return String("Ballot cast!")
+    pushbytes "Ballot cast!"
+    // smart_contracts/election/contract.py:19
+    // @abimethod()
+    b cast_ballot_after_inlined_smart_contracts.election.contract.Election.cast_ballot@4
+
+
+// smart_contracts.election.contract.Election.verify_ballot[routing]() -> void:
+verify_ballot:
+    // smart_contracts/election/contract.py:31
+    // @abimethod()
+    txna ApplicationArgs 1
+    dupn 2
+    len
+    pushint 32 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    txna ApplicationArgs 2
+    dup
+    len
+    pushint 8 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    swap
+    // smart_contracts/election/contract.py:33
+    // result, exists = self.verified.maybe(for_account)
+    intc_0 // 0
+    bytec_0 // "verified"
+    app_local_get_ex
+    // smart_contracts/election/contract.py:34
+    // if (not exists):
+    bnz verify_ballot_after_if_else@3
+    // smart_contracts/election/contract.py:35
+    // return String("Account has not cast a ballot!")
+    pushbytes "Account has not cast a ballot!"
+
+verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ballot@6:
+    // smart_contracts/election/contract.py:31
+    // @abimethod()
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec_2 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+verify_ballot_after_if_else@3:
+    // smart_contracts/election/contract.py:36
+    // if (result == 1):
+    dup
+    intc_1 // 1
+    ==
+    bz verify_ballot_after_if_else@5
+    // smart_contracts/election/contract.py:37
+    // return String("This ballot is already verified!")
+    pushbytes "This ballot is already verified!"
+    // smart_contracts/election/contract.py:31
+    // @abimethod()
+    b verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ballot@6
+
+verify_ballot_after_if_else@5:
+    // smart_contracts/election/contract.py:39
+    // self.commitment_sum.value = new_commitment_sum
+    bytec_1 // "commitment_sum"
+    dig 2
+    app_global_put
+    // smart_contracts/election/contract.py:40
+    // self.verified[for_account] = UInt64(1)
+    dig 2
+    bytec_0 // "verified"
+    intc_1 // 1
+    app_local_put
+    // smart_contracts/election/contract.py:41
+    // return String("Verified ballot!")
+    pushbytes "Verified ballot!"
+    // smart_contracts/election/contract.py:31
+    // @abimethod()
+    b verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ballot@6
