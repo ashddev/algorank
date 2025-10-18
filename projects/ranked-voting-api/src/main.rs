@@ -1,80 +1,76 @@
-#[macro_use] extern crate rocket;
-
-mod cors;
-mod zk;
+#[macro_use]
+extern crate rocket;
 
 use rocket::serde::{json::Json, Deserialize, Serialize};
-use zk::*;
+use base64::{engine::general_purpose::STANDARD as B64, Engine as _};
+
+mod ranked_voting;
+use ranked_voting::{generate_vote, verify_proof, proof_to_bytes, proof_from_bytes};
+
+#[derive(Deserialize)]
+#[serde(crate = "rocket::serde")]
+struct GenerateIn {
+    ballot: Vec<u32>,
+    setup_seed: u64,
+    proof_seed: u64,
+}
 
 #[derive(Serialize)]
-struct SetupOut {
-    ballot_size: usize,
-    scores: Vec<u32>,
+#[serde(crate = "rocket::serde")]
+struct GenerateOut {
+    ok: bool,
+    error: Option<String>,
+    proof: Option<String>,
 }
 
 #[derive(Deserialize)]
-struct GenerateIn {
-    ballot_size: usize,
-    scores: Vec<u32>,
+#[serde(crate = "rocket::serde")]
+struct VerifyIn {
+    proof: String,
+    n: usize,
+    setup_seed: u64,
+    proof_seed: u64,
 }
 
 #[derive(Serialize)]
-struct GenerateOut {
+#[serde(crate = "rocket::serde")]
+struct VerifyOut {
     ok: bool,
     error: Option<String>,
 }
 
-#[derive(Deserialize)]
-struct VerifyIn {
-    ballot_size: usize,
-    scores: Vec<u32>,
-}
-
-#[derive(Serialize)]
-struct VerifyOut {
-    ok: bool,
-}
-
-#[post("/setup", data = "<ballot_size>")]
-fn setup_route(ballot_size: Json<usize>) -> Json<SetupOut> {
-    let params = setup(*ballot_size);
-    let ui = SetupOut {
-        ballot_size: params.ballot_size,
-        scores: params.a.scores.clone(),
-    };
-    Json(ui)
-}
-
 #[post("/generate", data = "<inp>")]
-fn generate_route(inp: Json<GenerateIn>) -> Json<GenerateOut> {
-    let setup_params = setup(inp.ballot_size);
-    match generate_vote(&inp.scores, &setup_params) {
-        Ok(_proof) => Json(GenerateOut { ok: true, error: None }),
-        Err(e) => Json(GenerateOut {
-            ok: false,
-            error: Some(e),
-        }),
+async fn generate_route(inp: Json<GenerateIn>) -> Json<GenerateOut> {
+    match generate_vote(&inp.ballot, inp.setup_seed, inp.proof_seed) {
+        Ok(p) => match proof_to_bytes(&p) {
+            Ok(bytes) => {
+                let proof_b64 = B64.encode(bytes);
+                Json(GenerateOut { ok: true, error: None, proof: Some(proof_b64) })
+            }
+            Err(e) => Json(GenerateOut { ok: false, error: Some(e.to_string()), proof: None }),
+        },
+        Err(e) => Json(GenerateOut { ok: false, error: Some(e), proof: None }),
     }
 }
 
 #[post("/verify", data = "<inp>")]
-fn verify_route(inp: Json<VerifyIn>) -> Json<VerifyOut> {
-    let setup_params = setup(inp.ballot_size);
-    let proof = generate_vote(&inp.scores, &setup_params);
-
-    // In a real stateless system, you'd receive the proof and commitments as parameters,
-    // but for now we just reuse the locally generated one for simplicity.
-    let ok = match proof {
-        Ok(p) => verify_proof(&p, &setup_params),
-        Err(_) => false,
+async fn verify_route(inp: Json<VerifyIn>) -> Json<VerifyOut> {
+    let decoded = match B64.decode(&inp.proof) {
+        Ok(b) => b,
+        Err(e) => return Json(VerifyOut { ok: false, error: Some(format!("base64 decode error: {e}")) }),
     };
 
-    Json(VerifyOut { ok })
+    let proof = match proof_from_bytes(&decoded, inp.n) {
+        Ok(p) => p,
+        Err(e) => return Json(VerifyOut { ok: false, error: Some(e.to_string()) }),
+    };
+
+    let ok = verify_proof(&proof, inp.n, inp.setup_seed, inp.proof_seed);
+    Json(VerifyOut { ok, error: None })
 }
 
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .attach(cors::Cors)
-        .mount("/", routes![setup_route, generate_route, verify_route])
+        .mount("/", routes![generate_route, verify_route])
 }
