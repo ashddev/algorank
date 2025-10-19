@@ -3,7 +3,6 @@ import React, { useMemo, useState, useEffect } from 'react'
 import ConnectWallet from './components/ConnectWallet'
 import Register from './components/Register'
 import CreateBallot from './components/CreateBallot'
-import Tally from './components/Tally'
 import { uploadBallotPinata } from './utils/pinata'
 import { useWallet } from "@txnlab/use-wallet-react"
 import { AlgorandClient } from "@algorandfoundation/algokit-utils"
@@ -11,16 +10,21 @@ import { getAlgodConfigFromViteEnvironment, getIndexerConfigFromViteEnvironment 
 import { APP_SPEC } from "./contracts/Election"
 import { useSnackbar } from 'notistack'
 import { Button } from './components/ui/button'
+import { generateProofParts } from './utils/zk'
+import { ensureLocalnetFunds } from './utils/fundLocalnet'
 
-const ELECTION_APP_ID = BigInt(1015)
+const ELECTION_APP_ID = BigInt(1002)
 
 const Home: React.FC = () => {
-  type Phase = "register" | "voting" | "tally"
+  type Phase = "register" | "voting"
   const [phase, setPhase] = useState<Phase>("register")
-  const { transactionSigner, activeAddress } = useWallet()
+  const { transactionSigner, activeAddress, activeWalletAccounts } = useWallet()
   const { enqueueSnackbar } = useSnackbar()
 
   let utf8Encode = new TextEncoder();
+
+  const setup_seed = 0
+  const proof_seed = 10
 
   const algodConfig = getAlgodConfigFromViteEnvironment()
   const indexerConfig = getIndexerConfigFromViteEnvironment()
@@ -36,9 +40,27 @@ const Home: React.FC = () => {
     return algorand.client.getAppClientById({
       appSpec: APP_SPEC,
       appId: ELECTION_APP_ID,
-      defaultSender: activeAddress,
     })
   }, [algorand, activeAddress])
+
+  const isLocalnet = import.meta.env.VITE_ALGOD_NETWORK === 'localnet'
+  useEffect(() => {
+    if (!isLocalnet || !activeAddress) return
+    ;(async () => {
+      try {
+        if (activeWalletAccounts?.length) {
+          for (const a of activeWalletAccounts) {
+            await ensureLocalnetFunds(algorand, a.address, { minAlgo: 5, topUpAlgo: 10 })
+          }
+        }
+      } catch (e) {
+        console.error('Auto-fund failed:', e)
+      }
+    })()
+  }, [algorand, activeAddress])
+
+
+  
 
   return (
     <div className="min-h-screen bg-teal-400 flex items-center">
@@ -67,10 +89,12 @@ const Home: React.FC = () => {
           <CreateBallot
             onSubmit={async (ranking) => {
               try {
-                const cid = await uploadBallotPinata({ranking})
+                const proof = await generateProofParts({ ballot: ranking, setup_seed, proof_seed })
+                const cid = await uploadBallotPinata(proof)
                 const res = await electionClient.send
                   .call({
                     method: 'cast_ballot',
+                    sender: activeAddress ?? undefined,
                     args: [utf8Encode.encode(cid)]
                   })
                 enqueueSnackbar(`Ballot submitted! Tx: ${res.transaction.txID()}`, { variant: 'success' })
@@ -85,7 +109,6 @@ const Home: React.FC = () => {
           <div className="text-sm text-red-600">Connect wallet to vote.</div>
         )}
 
-        {phase === "tally" && (<Tally />)}
       </div>
     </div>
   )

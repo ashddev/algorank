@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button"
 
 type CreateBallotProps = {
   title?: string
-  candidates?: Record<number, string>               // numeric-like keys → labels
-  maxRank?: number                                  // defaults to number of candidates
-  onSubmit?: (ranking: number[]) => void            // permutation of candidate KEYS
+  candidates?: Record<number, string>
+  maxRank?: number
+  onSubmit?: (ranking: number[]) => void
 }
 
 const DEFAULT_TITLE = "DAO Council Election — Rank Your Delegates"
@@ -13,6 +13,7 @@ const DEFAULT_CANDIDATES: Record<number, string> = {
   0: "Delegate Alice (Core Dev)",
   1: "Delegate Bob (Treasury Guild)",
   2: "Delegate Carol (Risk)",
+  3: "Delegate Eve (Security Audit)"
 }
 
 const ordinal = (n: number) =>
@@ -27,7 +28,6 @@ export default function CreateBallotBoard({
   maxRank = Object.keys(DEFAULT_CANDIDATES).length,
   onSubmit,
 }: CreateBallotProps) {
-  // Materialize stable rows: [key,name] sorted by numeric key
   const entries = useMemo(
     () =>
       (Object.entries(candidates) as [string, string][])
@@ -37,14 +37,11 @@ export default function CreateBallotBoard({
   const keysNum = useMemo(() => entries.map(([k]) => Number(k)), [entries])
   const names   = useMemo(() => entries.map(([, v]) => v), [entries])
 
-  // PRIMARY STATE: ranks[rankIdx] = rowIdx | null
-  // rankIdx is the column (preference position), rowIdx indexes into keysNum/names
   const [ranks, setRanks] = useState<Array<number | null>>(
     Array(maxRank).fill(null)
   )
   const [submitting, setSubmitting] = useState(false)
 
-  // Derive assignments for “selected” styling: assignments[rowIdx] = rankIdx | null
   const assignments = useMemo(() => {
     const a = Array(keysNum.length).fill(null) as Array<number | null>
     ranks.forEach((rowIdx, rankIdx) => {
@@ -53,14 +50,12 @@ export default function CreateBallotBoard({
     return a
   }, [ranks, keysNum.length])
 
-  // Place-or-swap selection to keep a valid permutation without duplicates
   const handleSelect = (rowIdx: number, rankIdx: number) => {
     setRanks(prev => {
       const next = [...prev]
-      const oldRankOfCandidate = prev.findIndex(r => r === rowIdx) // -1 if not placed
-      const occupantRowAtTarget = prev[rankIdx]                    // rowIdx | null
+      const oldRankOfCandidate = prev.findIndex(r => r === rowIdx)
+      const occupantRowAtTarget = prev[rankIdx]
 
-      // Toggle off if clicking the same cell
       if (oldRankOfCandidate === rankIdx) {
         next[rankIdx] = null
         return next
@@ -97,10 +92,9 @@ export default function CreateBallotBoard({
 
   const allFilled = ranks.every(r => r !== null)
 
-  // Final ballot: number[] permutation of candidate KEYS (ordered by preference)
+  // Final ballot: number[] of candidate KEYS (ordered by preference)
   const permNums: number[] = useMemo(() => {
     if (!allFilled) return []
-    // ranks[rankIdx] -> rowIdx -> keysNum[rowIdx]
     return ranks.map(rowIdx => keysNum[rowIdx as number])
   }, [ranks, keysNum, allFilled])
 

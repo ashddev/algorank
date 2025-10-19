@@ -13,7 +13,7 @@ export default function RegisterButton({ electionClient }: RegisterButtonProps) 
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
   
-    const { activeAddress } = useWallet()
+    const { activeAddress , transactionSigner} = useWallet()
 
   const handleRegister = async () => {
     if (!activeAddress) {
@@ -22,7 +22,7 @@ export default function RegisterButton({ electionClient }: RegisterButtonProps) 
     }
     setLoading(true)
     try {
-        await electionClient.send.bare.optIn({})
+        await electionClient.send.bare.optIn({sender: activeAddress ?? undefined, signer: transactionSigner})
         enqueueSnackbar("Registered: Opt-in successful", { variant: "success" })
     } catch (e: any) {
         enqueueSnackbar(`Opt-in failed: ${e?.message ?? e}`, { variant: "error" })

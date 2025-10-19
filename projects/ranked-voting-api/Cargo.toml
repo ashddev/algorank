@@ -16,3 +16,4 @@ bincode = "1.3.3"
 serde = "1.0.219"
 base64 = "0.22"
 rocket = { version = "0.5", features = ["json"] }
+rocket_cors = "0.6"

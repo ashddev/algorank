@@ -8,7 +8,7 @@ export function KmdAccountSwitcher() {
   const {
     activeAddress,
     activeWallet,
-    activeWalletAccounts, // if your version exposes this, we’ll use it
+    activeWalletAccounts,
   } = useWallet()
 
   const isKmdActive = activeWallet?.id === WalletId.KMD

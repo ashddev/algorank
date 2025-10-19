@@ -17,7 +17,7 @@ from algokit_utils.transactions.transaction_composer import (
 
 load_dotenv()
 
-APP_ID = int(os.environ.get("APP_ID", "1015"))
+APP_ID = int(os.environ.get("APP_ID", "1002"))
 INDEXER_URL = os.environ.get("INDEXER_URL", "http://localhost:8980")
 SLEEP_INTERVAL = int(os.environ.get("SLEEP_INTERVAL", "5"))
 LOCAL_STATE_PROOF_KEY = os.environ.get("LOCAL_STATE_PROOF_KEY", "ballot_ipfs")
@@ -215,8 +215,10 @@ def main():
 
                 # TODO: verify proof via your Rust verifier or bridge
                 cid = ipfs_bytes.decode("utf-8")
-                content = fetch_ipfs_json(cid)
+                proof = fetch_ipfs_json(cid)
                 print(content)
+
+                
                 proof_valid = True
 
                 if proof_valid:

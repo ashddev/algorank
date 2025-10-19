@@ -1,7 +1,9 @@
 #[macro_use]
 extern crate rocket;
 
+use rocket::{get, post, routes};
 use rocket::serde::{json::Json, Deserialize, Serialize};
+use rocket_cors::{AllowedOrigins, CorsOptions, AllowedHeaders};
 
 mod ranked_voting;
 use ranked_voting::{
@@ -112,6 +114,18 @@ async fn selfcheck() -> String {
 
 #[launch]
 fn rocket() -> _ {
+    let cors = CorsOptions {
+        // allow http://localhost:5173, http://127.0.0.1:5173, or just Allow all during dev
+        allowed_origins: AllowedOrigins::all(),
+        // allow common headers; json triggers preflight so allow content-type
+        allowed_headers: AllowedHeaders::some(&["Content-Type"]),
+        allow_credentials: false,
+        ..Default::default()
+    }
+    .to_cors()
+    .expect("error building CORS");
+
     rocket::build()
+        .attach(cors)
         .mount("/", routes![generate_route, verify_route, selfcheck])
 }

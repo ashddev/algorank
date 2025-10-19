@@ -1,7 +1,8 @@
+import { ProofPartsB64 } from "./zk";
 
 const jwt = import.meta.env.VITE_PINATA_JWT ?? ""
 
-export async function uploadBallotPinata(ballot: unknown): Promise<string> {
+export async function uploadBallotPinata(ballot: ProofPartsB64): Promise<string> {
   const res = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
     method: 'POST',
     headers: {
