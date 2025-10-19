@@ -5,6 +5,14 @@
 [!(Demo video)[Confidential E-Voting System Demo with Algorand Applications 🔒.mp4]
 ](https://www.loom.com/share/e42c43c18f454e588efcc942c00a4820?sid=fde75898-96bb-4a81-a6e4-66b636cb7485)
 
+## Screenshots
+
+![Alt text](captures/screenshot-2025-10-19_10-20-21.png)
+
+![Alt text](captures/screenshot-2025-10-19_11-45-23.png)
+
+![Alt text](captures/screenshot-2025-10-19_11-45-48.png)
+
 ## How the smart contract works
 
 ### What the contract stores
