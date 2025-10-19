@@ -12,7 +12,7 @@ import { APP_SPEC } from "./contracts/Election"
 import { useSnackbar } from 'notistack'
 import { Button } from './components/ui/button'
 
-const ELECTION_APP_ID = BigInt(1002)
+const ELECTION_APP_ID = BigInt(1015)
 
 const Home: React.FC = () => {
   type Phase = "register" | "voting" | "tally"

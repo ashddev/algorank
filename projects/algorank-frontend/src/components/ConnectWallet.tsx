@@ -13,6 +13,7 @@ import {
 import { Button } from './ui/button'
 import { useState } from 'react'
 import { Spinner } from './ui/spinner'
+import { KmdAccountSwitcher } from './KMDAccountSwitcher'
 
 const ConnectWallet = () => {
   const { wallets, activeAddress } = useWallet()
@@ -80,6 +81,7 @@ const ConnectWallet = () => {
                 {isThisConnecting && <Spinner />}
               </Button>
             )})}
+            <KmdAccountSwitcher />
         </div>
         <DialogFooter className="sm:justify-start w-full">
           <div className='w-full flex gap-4'>

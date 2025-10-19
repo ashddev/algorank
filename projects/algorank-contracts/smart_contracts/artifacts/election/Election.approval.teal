@@ -4,7 +4,7 @@
 // algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
     intcblock 0 1
-    bytecblock "verified" "commitment_sum" 0x151f7c75
+    bytecblock "verified" "commitment_sum" "verifier_set" 0x151f7c75 "verifier_pk"
     txn ApplicationID
     bnz main_after_if_else@2
     // smart_contracts/election/contract.py:7-8
@@ -13,36 +13,41 @@ main:
     bytec_1 // "commitment_sum"
     intc_0 // 0
     app_global_put
+    // smart_contracts/election/contract.py:10
+    // self.verifier_set = GlobalState(UInt64(0))
+    bytec_2 // "verifier_set"
+    intc_0 // 0
+    app_global_put
 
 main_after_if_else@2:
     // smart_contracts/election/contract.py:5
     // class Election(ARC4Contract):
     txn NumAppArgs
-    bz main_bare_routing@11
+    bz main_bare_routing@12
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
     assert
-    pushbytess 0x9faa80cc 0xe42341d3 // method "cast_ballot(byte[])string", method "verify_ballot(address,uint64)string"
+    pushbytess 0x9faa80cc 0x060e6663 0xe42341d3 // method "cast_ballot(byte[])string", method "set_verifier()string", method "verify_ballot(address,uint64)string"
     txna ApplicationArgs 0
-    match cast_ballot verify_ballot
+    match cast_ballot set_verifier verify_ballot
     err
 
-main_bare_routing@11:
+main_bare_routing@12:
     // smart_contracts/election/contract.py:5
     // class Election(ARC4Contract):
     txn OnCompletion
-    switch main___algopy_default_create@12 main_register@13
+    switch main___algopy_default_create@13 main_register@14
     err
 
-main_register@13:
-    // smart_contracts/election/contract.py:15
+main_register@14:
+    // smart_contracts/election/contract.py:16
     // @baremethod(allow_actions=["OptIn"])
     txn ApplicationID
     return // on error: can only call when not creating
 
-main___algopy_default_create@12:
+main___algopy_default_create@13:
     txn ApplicationID
     !
     return // on error: can only call when creating
@@ -50,7 +55,7 @@ main___algopy_default_create@12:
 
 // smart_contracts.election.contract.Election.cast_ballot[routing]() -> void:
 cast_ballot:
-    // smart_contracts/election/contract.py:19
+    // smart_contracts/election/contract.py:20
     // @abimethod()
     txna ApplicationArgs 1
     dup
@@ -63,25 +68,25 @@ cast_ballot:
     ==
     assert // invalid number of bytes for (len+uint8[])
     extract 2 0
-    // smart_contracts/election/contract.py:21
+    // smart_contracts/election/contract.py:22
     // account = Txn.sender
     txn Sender
     dup
-    // smart_contracts/election/contract.py:22
+    // smart_contracts/election/contract.py:23
     // result, exists = self.verified.maybe(account)
     intc_0 // 0
     bytec_0 // "verified"
     app_local_get_ex
     bury 1
-    // smart_contracts/election/contract.py:23
+    // smart_contracts/election/contract.py:24
     // if (exists):
     bz cast_ballot_after_if_else@3
-    // smart_contracts/election/contract.py:24
+    // smart_contracts/election/contract.py:25
     // return String("Ballot already sent!")
     pushbytes "Ballot already sent!"
 
 cast_ballot_after_inlined_smart_contracts.election.contract.Election.cast_ballot@4:
-    // smart_contracts/election/contract.py:19
+    // smart_contracts/election/contract.py:20
     // @abimethod()
     dup
     len
@@ -89,7 +94,7 @@ cast_ballot_after_inlined_smart_contracts.election.contract.Election.cast_ballot
     extract 6 2
     swap
     concat
-    bytec_2 // 0x151f7c75
+    bytec_3 // 0x151f7c75
     swap
     concat
     log
@@ -97,31 +102,54 @@ cast_ballot_after_inlined_smart_contracts.election.contract.Election.cast_ballot
     return
 
 cast_ballot_after_if_else@3:
-    // smart_contracts/election/contract.py:26
+    // smart_contracts/election/contract.py:27
     // self.ballot_ipfs[account] = ipfs_hash
     dupn 2
     pushbytes "ballot_ipfs"
     dig 4
     app_local_put
-    // smart_contracts/election/contract.py:27
+    // smart_contracts/election/contract.py:28
     // self.verified[account] = UInt64(0)
     bytec_0 // "verified"
     intc_0 // 0
     app_local_put
-    // smart_contracts/election/contract.py:28
+    // smart_contracts/election/contract.py:29
     // return String("Ballot cast!")
     pushbytes "Ballot cast!"
-    // smart_contracts/election/contract.py:19
+    // smart_contracts/election/contract.py:20
     // @abimethod()
     b cast_ballot_after_inlined_smart_contracts.election.contract.Election.cast_ballot@4
 
 
-// smart_contracts.election.contract.Election.verify_ballot[routing]() -> void:
-verify_ballot:
+// smart_contracts.election.contract.Election.set_verifier[routing]() -> void:
+set_verifier:
+    // smart_contracts/election/contract.py:33-35
+    // # if self.verifier_set.value == 1:
+    // #     return String("Verifier already set")
+    // self.verifier_pk.value = Txn.sender
+    bytec 4 // "verifier_pk"
+    txn Sender
+    app_global_put
+    // smart_contracts/election/contract.py:36
+    // self.verifier_set.value = UInt64(1)
+    bytec_2 // "verifier_set"
+    intc_1 // 1
+    app_global_put
     // smart_contracts/election/contract.py:31
     // @abimethod()
+    pushbytes 0x151f7c75000c566572696669657220736574
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts.election.contract.Election.verify_ballot[routing]() -> void:
+verify_ballot:
+    pushbytes ""
+    // smart_contracts/election/contract.py:39
+    // @abimethod()
     txna ApplicationArgs 1
-    dupn 2
+    dup
     len
     pushint 32 // 32
     ==
@@ -133,21 +161,21 @@ verify_ballot:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    swap
-    // smart_contracts/election/contract.py:33
-    // result, exists = self.verified.maybe(for_account)
+    // smart_contracts/election/contract.py:41
+    // if Txn.sender != self.verifier_pk.value:
+    txn Sender
     intc_0 // 0
-    bytec_0 // "verified"
-    app_local_get_ex
-    // smart_contracts/election/contract.py:34
-    // if (not exists):
-    bnz verify_ballot_after_if_else@3
-    // smart_contracts/election/contract.py:35
-    // return String("Account has not cast a ballot!")
-    pushbytes "Account has not cast a ballot!"
+    bytec 4 // "verifier_pk"
+    app_global_get_ex
+    assert // check self.verifier_pk exists
+    !=
+    bz verify_ballot_after_if_else@3
+    // smart_contracts/election/contract.py:42
+    // return String("Unauthorized")
+    pushbytes "Unauthorized"
 
-verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ballot@6:
-    // smart_contracts/election/contract.py:31
+verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ballot@8:
+    // smart_contracts/election/contract.py:39
     // @abimethod()
     dup
     len
@@ -155,7 +183,7 @@ verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ba
     extract 6 2
     swap
     concat
-    bytec_2 // 0x151f7c75
+    bytec_3 // 0x151f7c75
     swap
     concat
     log
@@ -163,34 +191,53 @@ verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ba
     return
 
 verify_ballot_after_if_else@3:
-    // smart_contracts/election/contract.py:36
-    // if (result == 1):
-    dup
-    intc_1 // 1
-    ==
-    bz verify_ballot_after_if_else@5
-    // smart_contracts/election/contract.py:37
-    // return String("This ballot is already verified!")
-    pushbytes "This ballot is already verified!"
-    // smart_contracts/election/contract.py:31
+    // smart_contracts/election/contract.py:44
+    // result, exists = self.verified.maybe(for_account)
+    dig 1
+    intc_0 // 0
+    bytec_0 // "verified"
+    app_local_get_ex
+    swap
+    bury 4
+    // smart_contracts/election/contract.py:45
+    // if (not exists):
+    bnz verify_ballot_after_if_else@5
+    // smart_contracts/election/contract.py:46
+    // return String("Account has not cast a ballot!")
+    pushbytes "Account has not cast a ballot!"
+    // smart_contracts/election/contract.py:39
     // @abimethod()
-    b verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ballot@6
+    b verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ballot@8
 
 verify_ballot_after_if_else@5:
+    // smart_contracts/election/contract.py:47
+    // if (result == 1):
+    dig 2
+    intc_1 // 1
+    ==
+    bz verify_ballot_after_if_else@7
+    // smart_contracts/election/contract.py:48
+    // return String("This ballot is already verified!")
+    pushbytes "This ballot is already verified!"
     // smart_contracts/election/contract.py:39
+    // @abimethod()
+    b verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ballot@8
+
+verify_ballot_after_if_else@7:
+    // smart_contracts/election/contract.py:50
     // self.commitment_sum.value = new_commitment_sum
     bytec_1 // "commitment_sum"
-    dig 2
+    dig 1
     app_global_put
-    // smart_contracts/election/contract.py:40
+    // smart_contracts/election/contract.py:51
     // self.verified[for_account] = UInt64(1)
-    dig 2
+    dig 1
     bytec_0 // "verified"
     intc_1 // 1
     app_local_put
-    // smart_contracts/election/contract.py:41
+    // smart_contracts/election/contract.py:52
     // return String("Verified ballot!")
     pushbytes "Verified ballot!"
-    // smart_contracts/election/contract.py:31
+    // smart_contracts/election/contract.py:39
     // @abimethod()
-    b verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ballot@6
+    b verify_ballot_after_inlined_smart_contracts.election.contract.Election.verify_ballot@8
