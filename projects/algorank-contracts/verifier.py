@@ -1,6 +1,7 @@
 # verifier.py
 import os, time, base64, json, typing as t
 import requests
+import hashlib
 
 from typing import Any, Dict, Optional
 
@@ -26,6 +27,8 @@ PINATA_GATEWAY_TOKEN = os.environ.get("PINATA_GATEWAY_TOKEN")
 
 IDX = indexer.IndexerClient("", INDEXER_URL)
 
+U64_MOD = 1 << 64
+COMMITMENT_SUM_KEY = os.environ.get("COMMITMENT_SUM_KEY", "commitment_sum")
 
 # ---------- Helpers ----------
 def method(sig: str) -> Method:
@@ -130,6 +133,38 @@ def verify_one_ballot(
     )
     print("verify_ballot ->", msg)
 
+def commitment_digest_u64(proof_json: dict) -> int:
+    """
+    64-bit digest bound to the proof contents.
+    Uses BLAKE2b-64 over committed parts + proof bytes.
+    """
+    h = hashlib.blake2b(digest_size=8)
+    h.update(base64.b64decode(proof_json["committed_ballot"]))
+    h.update(base64.b64decode(proof_json["committed_permutation"]))
+    h.update(base64.b64decode(proof_json["proof"]))
+    return int.from_bytes(h.digest(), "big")
+
+def get_app_global_uint(ac: AlgorandClient, app_id: int, key: str) -> int:
+    """
+    Read a uint value from application global state using AlgorandClient.
+    Returns 0 if missing or not found.
+    """
+    try:
+        app_info = ac.client.algod.application_info(app_id)
+        global_state = app_info["params"].get("global-state", [])
+
+        for kv in global_state:
+            k = decode_b64_str(kv["key"])
+            if k == key:
+                val = kv.get("value", {})
+                if "uint" in val:
+                    return int(val["uint"])
+                break
+        return 0
+    except Exception as e:
+        print(f"⚠️ Error fetching global uint '{key}': {e}")
+        return 0
+
 
 class FetchError(Exception):
     pass
@@ -174,6 +209,39 @@ def fetch_ipfs_json(cid: str) -> t.Any:
     except Exception as e:
         raise FetchError(f"Failed to parse JSON for {cid}: {e}") from e
 
+def verify_zk_proof(proof_json: dict) -> bool:
+    """
+    Fetch proof JSON from IPFS (Pinata gateway) and verify it using the Rust ZK service (/verify).
+    Returns True if verification passes, False otherwise.
+    """
+    ZK_URL = os.environ.get("ZK_URL", "http://127.0.0.1:8000").rstrip("/")
+    SETUP_SEED = int(os.environ.get("ZK_SETUP_SEED"))
+    PROOF_SEED = int(os.environ.get("ZK_PROOF_SEED"))
+
+    try:
+        payload = {
+            "proof": proof_json,
+            "setup_seed": SETUP_SEED,
+            "proof_seed": PROOF_SEED,
+        }
+
+        r = requests.post(f"{ZK_URL}/verify", json=payload, timeout=20)
+        if r.status_code != 200:
+            print(f"ZK verify failed HTTP {r.status_code}: {r.text[:200]}")
+            return False
+
+        data = r.json()
+        if data.get("ok"):
+            print(f"Proof verified successfully")
+            return True
+        else:
+            print(f"Proof verification failed: {data.get('error')}")
+            return False
+
+    except Exception as e:
+        print(f"ZK verify error for CID {cid}: {e}")
+        return False
+
 
 # ---------- Main ----------
 def main():
@@ -213,16 +281,14 @@ def main():
                     continue
                 print(f"Found opted-in account: {voter_addr}")
 
-                # TODO: verify proof via your Rust verifier or bridge
                 cid = ipfs_bytes.decode("utf-8")
                 proof = fetch_ipfs_json(cid)
-                print(content)
-
+                proof_valid = verify_zk_proof(proof)
                 
-                proof_valid = True
-
                 if proof_valid:
-                    new_commitment_sum = 123456
+                    digest = commitment_digest_u64(proof)
+                    old_commitment_sum = get_app_global_uint(algorand, APP_ID, COMMITMENT_SUM_KEY)
+                    new_commitment_sum = (old_commitment_sum + digest) % U64_MOD
                     verify_one_ballot(algorand, verifier_addr, voter_addr, new_commitment_sum, signer)
                     print(f"✅ Verified ballot for {voter_addr}")
                 else:
